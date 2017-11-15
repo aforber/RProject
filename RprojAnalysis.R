@@ -40,6 +40,8 @@ dat <- merge(df, weath, by.x = c("District", "Epiweek", "Epiyear"),
 library(VIM)
 summary(aggr(dat))
 
+dat <- dat[complete.cases(dat[, c(1:11, 14:19)]),]
+
 
 # EXPORT NEW DATA
 write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv')
