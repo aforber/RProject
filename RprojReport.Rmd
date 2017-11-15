@@ -1,0 +1,31 @@
+---
+title: "R Data Analysis Project"
+subtitle: "Weather and Malaria Incidence and Intervention Data for Mozambique"
+author: "Alyssa Forber"
+date: "11/15/2017"
+output: pdf_document
+geometry: margin=1in
+fontsize: 12pt 
+header-includes:
+    - \usepackage{setspace}\doublespacing
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The write-up should include abackground section with a literature review and citations (at least one page), a descriptionof the problem and data (approximately one page), results (no page expectation, but thereshould  be  4-5  figures  and  at  least  one  should  be  a  map),  conclusions,  references  and  anysupplemental material you choose to include.
+
+## Background (1 page)
+
+## Data (~ 1 page)
+
+## Results 
+
+## Conclusions
+
+## References
+
+## Appendix
+
+

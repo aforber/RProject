@@ -1,6 +1,19 @@
-RProject
+#RProject
 
-In  this  project,  you  will  be  analyzing  weather  and  (simulated)  malaria  incidence  and(simulated) intervention data from Mozambique.  The objective of this project is to describe the  temporal  and  spatial  variation  in  these  data  and  to  draw  conclusions about the  rela-tionships between the variables.  Information about malaria can be found on the Centers forDisease Control and Prevention’s website (https://www.cdc.gov/malaria/).The data for this project can be found in two places.  The weather data are here (http://rap.ucar.edu/staff/monaghan/colborn/mozambique/daily/v2/) and all other data arein the folder “FinalProject” on Canvas.  The “incidence.csv” data contain incidence data andother details of the districts. The “intervention.csv” data contain the intervention start timesfor various districts across the years of observation.  All data need to be merged together.Finally, the shapefile ending in .shp can be used to map attribute data.
+
+## In this folder:
+
+RprojCleanCode is the code for taking and cleaning the weather data off the url and exporting it.
+
+CleanWeather is the output from RprojCleanCode to use for analysis.
+
+RprojReport is the write up for the project. 
+
+
+
+## About the Project
+
+In  this  project,  you  will  be  analyzing  weather  and  (simulated)  malaria  incidence  and(simulated) intervention data from Mozambique.  The objective of this project is to describe the  temporal  and  spatial  variation  in  these  data  and  to  draw  conclusions about the  relationships between the variables.  Information about malaria can be found on the Centers forDisease Control and Prevention’s website (https://www.cdc.gov/malaria/).The data for this project can be found in two places.  The weather data are here (http://rap.ucar.edu/staff/monaghan/colborn/mozambique/daily/v2/) and all other data arein the folder “FinalProject” on Canvas.  The “incidence.csv” data contain incidence data andother details of the districts. The “intervention.csv” data contain the intervention start timesfor various districts across the years of observation.  All data need to be merged together.Finally, the shapefile ending in .shp can be used to map attribute data.
 
 
 year is the year 
