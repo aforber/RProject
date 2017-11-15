@@ -58,6 +58,27 @@ for (i in seq_along(d)){
   d[[i]]$longDate <- as.Date(paste(d[[i]]$year, d[[i]]$mo, d[[i]]$day, sep = "/"), format = "%Y/%m/%d")
 }
 
+# GET WEEKS
+library(data.table)
+
+for (i in seq_along(d)){
+  d[[i]]$Epiweek <- week(d[[i]]$longDate)
+}
+
+# AVERAGE BY WEEK FOR ALL VARS, EXCEPT SUM RAINT
+byweek <- NULL
+for (i in seq_along(d)){
+  byweek[[i]] <- data.table(d[[i]])[, list(raint = sum(raint), tavg=mean(tavg), rh= mean(rh), 
+                                           sd=mean(sd), psfc= mean(psfc), District=District), 
+                                    by=list(Epiweek, year)]
+}
+
+# MAKE IT A DATATABLE (not sure if I need to?)
+byweekdf <- NULL
+for (i in seq_along(byweek)){
+  byweekdf[[i]] <- as.data.frame(byweek[[i]])
+}
+
 
 
 # package called epiweek
