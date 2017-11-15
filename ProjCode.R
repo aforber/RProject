@@ -70,8 +70,40 @@ byweek <- NULL
 for (i in seq_along(d)){
   byweek[[i]] <- data.table(d[[i]])[, list(raint = sum(raint), tavg=mean(tavg), rh= mean(rh), 
                                            sd=mean(sd), psfc= mean(psfc), District=District), 
-                                    by=list(Epiweek, year)]
+                                    by=list(year, Epiweek)]
 }
+# this is not doing what it should
+
+
+library(plyr)
+byweek2 <- NULL
+for (i in seq_along(d)){
+  byweek2[[i]] <- ddply(d[[i]], .(Epiweek, year), summarize,  raint = sum(raint), tavg=mean(tavg), rh= mean(rh), 
+        sd=mean(sd), psfc= mean(psfc), District=District)
+}
+
+# this did what I want
+byweek2 <- NULL
+for (i in seq_along(d)){
+  byweek2[[i]] <- ddply(d[[i]], .(Epiweek, year), summarize,  raint = sum(raint), tavg=mean(tavg), rh= mean(rh), 
+                        sd=mean(sd), psfc= mean(psfc), District)
+}
+
+# ADD COLUMN FOR DISTRICT NAMES
+byweek2 <- Map(cbind, byweek2, District = districts)
+
+
+
+
+ddply(mtcars, .(am, cyl), summarize, mpg_mean = mean(mpg))
+sur_case <- as.data.frame(round(ddply(post_sur, .(month), summarize, Total_mean = mean(Total.Positive), Total_sd = sd(Total.Positive),
+                                      Under5_mean = mean(malaria_blood_smear_tests_positive_under_5yrs), 
+                                      Under5_sd = sd(malaria_blood_smear_tests_positive_under_5yrs),
+                                      Over5_mean = mean(malaria_blood_smear_tests_positive_5yrs_plus),
+                                      Over5_sd = sd(malaria_blood_smear_tests_positive_5yrs_plus)), digits = 2))
+
+
+
 
 # MAKE IT A DATATABLE (not sure if I need to?)
 byweekdf <- NULL
@@ -80,13 +112,6 @@ for (i in seq_along(byweek)){
 }
 
 
-
-# package called epiweek
-# use paste function to combine the date to do as.date
-# then use epiweek to create weeks
-# so you do sum or average over for the weeks, 
-# so that it binds to other data
-# sum rain, average of other vars
 
 # delete any non-matching data
 # don't deal with missing data
