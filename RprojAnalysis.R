@@ -17,6 +17,28 @@ dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/
 poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
 
 names(dat)
+# SQKM are square kilometers
+# u5total I think is population
+# we want incidence so that is cases/1000 people
+# incidence data today are likely related to exposure up to 14 days 
+# prior and the effects of weather and temperature, etc
+### Need to lag weather then?
+
+# we can assume that the IRS (indoor residual spraying) variable has 
+# 75% protection 6  months  after  the  start  date.   The  ITNs  
+# (insecticide  treated  bednets)  are  thought  to  be
+# 60% protective 24 months after the start date.  
+### No clue how to get the protection
+
+
+# there should only be one instance of each week/year/District
+# getting weird things
+counts <- count(dat, vars = c("Epiweek", "Epiyear", "District"))
+
+# something weird must have happned when I tried to average by week??
+# there are some duplicates it seems
+plot(dat$cases[dat$Epiyear==2012 & dat$District=="PEMBA"] ~ dat$Epiweek[dat$Epiyear==2012  & dat$District=="PEMBA"])
+count(dat$cases[dat$Epiyear==2012 & dat$District=="PEMBA"])
 
 #----------------
 # EXPLORE DATA
@@ -126,12 +148,15 @@ plot(dat$cases[dat$Epiyear==2014] ~ dat$Epiweek[dat$Epiyear==2014])
 plot(dat$cases[dat$Epiyear==2015] ~ dat$Epiweek[dat$Epiyear==2015])
 plot(dat$cases[dat$Epiyear==2016] ~ dat$Epiweek[dat$Epiyear==2016])
 
+# there are some duplicates it seems
+plot(dat$cases[dat$Epiyear==2012 & dat$District=="PEMBA"] ~ dat$Epiweek[dat$Epiyear==2012  & dat$District=="PEMBA"])
+
 # there seem to be too many for a week of the year
 # wondering if my data is correct
 (dat$cases[dat$Epiyear==2016])
 count(dat$cases[dat$Epiyear==2016])
 
-
+count(dat$Epiweek, dat$Epiyear, dat$District)
 
 
 
