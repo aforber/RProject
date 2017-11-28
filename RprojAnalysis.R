@@ -20,9 +20,13 @@ names(dat)
 # SQKM are square kilometers
 # u5total I think is population
 # we want incidence so that is cases/1000 people
-# incidence data today are likely related to exposure up to 14 days 
-# prior and the effects of weather and temperature, etc
-### Need to lag weather then?
+
+# The incidence data today are likelyrelated to exposure up to 14 days prior 
+# and the effects of weather and temperature, etc, arelikely related to exposure 
+# at an uncertain time before that.  This time is typically thought tobe 2, 4 or 8 
+# weeks from the day the person showed up in the health center.  You are expected
+# to create the lagged variables and explore their relationships with malaria incidence.
+
 
 # we can assume that the IRS (indoor residual spraying) variable has 
 # 75% protection 6  months  after  the  start  date.   The  ITNs  
@@ -30,15 +34,24 @@ names(dat)
 # 60% protective 24 months after the start date.  
 ### No clue how to get the protection
 
+#----------------
+### QUESTIONS 11.27
+# 1. I merged off of ITN week and year because IRS had so much missing,
+# was that right? because then to do the lag of effect I feel like I'm 
+# missing something. So I need to make two columns for the effectiveness
+# for ITN and then IRS?
+# and then I need to make columns that lag the weather/incidence
+# but have to make an incidence column
+# to make incidence column, I divide cases/population
+# that is now cases/100, so then I multiply by 1000? 
 
-# there should only be one instance of each week/year/District
-# getting weird things
-counts <- count(dat, vars = c("Epiweek", "Epiyear", "District"))
+# 2. Do we need to do a regression?
+# From description it seems like just 
+# "exploratory analysis figures, mapsof incidence, and explore, 
+# at the very least, basic rela-tionships between the independent 
+# variables and the outcome"
+# but no mention of an actual model...
 
-# something weird must have happned when I tried to average by week??
-# there are some duplicates it seems
-plot(dat$cases[dat$Epiyear==2012 & dat$District=="PEMBA"] ~ dat$Epiweek[dat$Epiyear==2012  & dat$District=="PEMBA"])
-count(dat$cases[dat$Epiyear==2012 & dat$District=="PEMBA"])
 
 #----------------
 # EXPLORE DATA

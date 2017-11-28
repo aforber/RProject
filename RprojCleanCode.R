@@ -9,6 +9,7 @@ rm(list=ls())
 library(maptools) 
 library(data.table)
 library(XML)
+library(plyr)
 
 
 #-----------
@@ -92,6 +93,7 @@ for (i in seq_along(byweek)){
 weath <- do.call("rbind", byweekdf)
 
 
+
 # EXPORT TO CSV TO EASILY READ IN
 write.csv(weath, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/CleanWeather.csv')
 
@@ -101,10 +103,7 @@ write.csv(weath, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject
 #----------------
 
 # MERGE INTER AND INCID
-datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek"), by.y = c("ITNyear", "ITNepiWeek"))
-
-# added a Distcode.y but we want Distcode.x
-datf$DISTCODE.y <- NULL
+datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"))
 
 
 # MERGE WITH WEATHER

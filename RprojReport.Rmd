@@ -16,6 +16,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The write-up should include abackground section with a literature review and citations (at least one page), a descriptionof the problem and data (approximately one page), results (no page expectation, but thereshould  be  4-5  figures  and  at  least  one  should  be  a  map),  conclusions,  references  and  anysupplemental material you choose to include.
 
+
+
+
+we can assume that the IRS (indoor residual spraying) variable has 75% protection6  months  after  the  start  date.   The  ITNs  (insecticide  treated  bednets)  are  thought  to  be
+60% protective 24 months after the start date.  When merging these data, these coveragesneed to be applied to the subsequent weeks after the start week.  For simplicity,  you canassume a constant decrease per week to achieve the protection described above, where wecan  assume  that  IRS  and  ITNs  start  with  100%  effectiveness  at  the  start  week
+
+
+The incidence data today are likelyrelated to exposure up to 14 days prior and the effects of weather and temperature, etc, arelikely related to exposure at an uncertain time before that.  This time is typically thought tobe 2, 4 or 8 weeks from the day the person showed up in the health center.  You are expectedto create the lagged variables and explore their relationships with malaria incidence.
+
 ## Background (1 page)
 
 ## Data (~ 1 page)
