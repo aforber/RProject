@@ -93,34 +93,8 @@ for (i in seq_along(byweek)){
 weath <- do.call("rbind", byweekdf)
 
 
-
 # EXPORT TO CSV TO EASILY READ IN
 write.csv(weath, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/CleanWeather.csv')
-
-
-#----------------
-# MERGE
-#----------------
-
-# MERGE INTER AND INCID
-datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"))
-
-
-# MERGE WITH WEATHER
-dat <- merge(datf, weath, by.x = c("District", "Epiweek", "Epiyear"), 
-             by.y = c("District", "Epiweek", "year"))
-
-
-# REMOVE NAS (keep NA for IRS week and year)
-# missing data for SQKM, Province, Region, u5total, cases
-library(VIM)
-summary(aggr(dat))
-
-dat <- dat[complete.cases(dat[, c(1:11, 14:18)]), ]
-
-
-# EXPORT NEW DATA
-write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv')
 
 
 # CLEAN WORKSPACE

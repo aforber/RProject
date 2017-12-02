@@ -8,42 +8,110 @@ rm(list=ls())
 
 library(maptools) 
 library(rgdal)
+library(ggplot2)
+library(VIM)
+
+library(RColorBrewer)
+library(sp)
+library(lattice)
+library(latticeExtra) # For layer()
 
 #------------
 # LOAD DATA
 #------------
 
-dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv', header=T)
+inter <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/intervention.csv', header=T)
+incid <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/incidence.csv')
+weath <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/CleanWeather.csv', header=T)
 poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
 
-names(dat)
-# SQKM are square kilometers
-# u5total I think is population
-# we want incidence so that is cases/1000 people
 
-# The incidence data today are likelyrelated to exposure up to 14 days prior 
-# and the effects of weather and temperature, etc, arelikely related to exposure 
-# at an uncertain time before that.  This time is typically thought tobe 2, 4 or 8 
-# weeks from the day the person showed up in the health center.  You are expected
-# to create the lagged variables and explore their relationships with malaria incidence.
+#--------------
+# LAG WEATHER
+#--------------
+weath$X <- NULL
+# 2 weeks
+weath2 <- weath
+weath2$Epiweek <- weath2$Epiweek + 2
+names(weath2) <- paste0(names(weath2), "2")
+# 4 weeks
+weath4 <- weath
+weath4$Epiweek <- weath4$Epiweek + 4
+names(weath4) <- paste0(names(weath4), "4")
+# 8 weeks
+weath8 <- weath
+weath8$Epiweek <- weath8$Epiweek + 8
+names(weath8) <- paste0(names(weath8), "8")
+
+#----------------
+# MERGE
+#----------------
+
+# Why don't the dates for the two interventions match up 
+# for inter? I'm merging off the ITN dates because they
+# are all there... 
+# merging with inter makes us loose a bunch of data
+# then we only have like one week for each district?
+
+# MERGE INTER AND INCID
+datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"))
+
+# MERGE WITH WEATHER2
+dat <- merge(datf, weath2, by.x = c("District", "Epiweek", "Epiyear"), 
+             by.y = c("District2", "Epiweek2", "year2"))
+# MERGE WITH WEATHER4
+dat <- merge(dat, weath4, by.x = c("District", "Epiweek", "Epiyear"), 
+             by.y = c("District4", "Epiweek4", "year4"))
+# MERGE WITH WEATHER8
+dat <- merge(dat, weath8, by.x = c("District", "Epiweek", "Epiyear"), 
+             by.y = c("District8", "Epiweek8", "year8"))
+
+# I'm surprised there are no missing values since we lagged.
+# That is suspicious
+
+#---------------
+# REMOVE NAS 
+#---------------
+
+# missing data for SQKM, Province, Region, u5total, cases
+# (keep NA for IRS week and year)
+# maybe keep na for sqkm, province and region as well
+
+summary(aggr(dat[,1:18]))
+
+dat <- dat[complete.cases(dat[, c(1:11, 14:18)]), ]
 
 
-# we can assume that the IRS (indoor residual spraying) variable has 
-# 75% protection 6  months  after  the  start  date.   The  ITNs  
-# (insecticide  treated  bednets)  are  thought  to  be
-# 60% protective 24 months after the start date.  
-### No clue how to get the protection
+# EXPORT NEW DATA
+write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv')
+
+
+
+#-----------------
+# CREATE NEW VARS
+#-----------------
+
+# INCIDENCE
+dat$incid <- dat$cases/dat$u5total*1000
+
+# SORT
+dat2 <- dat[with(dat, order("District", "Epiyear", "Epiweek")),]
+dat3 <- arrange(dat, Epiyear, Epiweek)
+dat4 <- with(dat, dat[order(DISTCODE, Epiyear, Epiweek),])
+
+
+# IRS PROTECTION (spray)
+# 75% protection 6 months after the start
+# 1 at 0 weeks, .75 at 
+
+# ITN PROTECTION (nets)
+# 60% protective 24 months after the start
+
 
 #----------------
 ### QUESTIONS 11.27
 # 1. I merged off of ITN week and year because IRS had so much missing,
-# was that right? because then to do the lag of effect I feel like I'm 
-# missing something. So I need to make two columns for the effectiveness
-# for ITN and then IRS?
-# and then I need to make columns that lag the weather/incidence
-# but have to make an incidence column
-# to make incidence column, I divide cases/population
-# that is now cases/100, so then I multiply by 1000? 
+# was that right??? 
 
 # 2. Do we need to do a regression?
 # From description it seems like just 
@@ -161,17 +229,6 @@ plot(dat$cases[dat$Epiyear==2014] ~ dat$Epiweek[dat$Epiyear==2014])
 plot(dat$cases[dat$Epiyear==2015] ~ dat$Epiweek[dat$Epiyear==2015])
 plot(dat$cases[dat$Epiyear==2016] ~ dat$Epiweek[dat$Epiyear==2016])
 
-# there are some duplicates it seems
-plot(dat$cases[dat$Epiyear==2012 & dat$District=="PEMBA"] ~ dat$Epiweek[dat$Epiyear==2012  & dat$District=="PEMBA"])
-
-# there seem to be too many for a week of the year
-# wondering if my data is correct
-(dat$cases[dat$Epiyear==2016])
-count(dat$cases[dat$Epiyear==2016])
-
-count(dat$Epiweek, dat$Epiyear, dat$District)
-
-
 
 #------------
 # GRAPHICS
@@ -181,10 +238,50 @@ count(dat$Epiweek, dat$Epiyear, dat$District)
 # and explore, at the very least, basic relationships between the independent 
 # variables and the outcome (malaria incidence)
 
+#-------------------
+# MERGE SPATIAL DATA
+#-------------------
+
+# get rownames to match
+# can't have duplicates though...
+# which means I have to only look at once instance (week)
+# but that's not very informative..?
+rownames(dat) <- dat$DISTCODE
+# sp package # allows you to create your own spatial poly data frame
+polydat <- SpatialPolygonsDataFrame(poly, dat)
+
+#--------------------------------------------
+# FROM NOTES10.17.17&SPATIALGRAPHICS
+# Basic Mozambique Map for total rainfall, 2016 week 8
+spplot(polydat, "rainTot", main = "Rainfall total", sub = "2016 week 8")
+
+#display.brewer.all()
+
+my.palette <- brewer.pal(n = 7, name = "YlGnBu") # want yellow, green, blue color palette
+# Different color scheme and cuts
+spplot(polydat, "rainTot", col.regions = my.palette, cuts = 6, col = "transparent", main = "Rainfall total", sub = "2016 week 8")
+
+# Temperature
+colours <- rainbow(6, start=0, end=1/6) # 6 colors, stopping at 1/6 makes a heat map
+# since it doesn't get to go all the way through the rainbow
+cols <- rev(colours)
+spplot(polydat, "tavg", col.regions = cols, cuts = 5, main = "Ave temperature 2016 week 8")
 
 
+# MULTIPLE #
+#tempPal <- brewer.pal(n = 6, name = "YlOrRd")
+rainPal <- brewer.pal(n = 6, name = "YlGnBu")
+#rhPal <- brewer.pal(n = 6, name = "BuPu")
+#sdPal <- brewer.pal(n = 6, name = "Greens")
 
-library(ggplot2)
+#trellis.par.set(sp.theme(regions=list(col = rainPal)))
+spplot(polydat, c("tavg", "rainTot", "rh", "sd"), names.attr = c("Ave temp", "Total rain", "Rel Humidity", 
+                                                                 "Saturation Pressure Deficit"), 
+       colorkey=list(space="right"), scales = list(draw = TRUE), main = "Mozambique weather, Week 8, 2016", 
+       as.table = TRUE, cuts=5, col.regions = rainPal)
+#------------------------------------------------
+
+
 
 # plot from https://stackoverflow.com/questions/29974535/dates-with-month-and-day-in-time-series-plot-in-ggplot2-with-facet-for-years
 p <- ggplot(data=dat, mapping=aes(x=Epiweek, y=raint, shape=as.factor(Epiyear), color=as.factor(Epiyear))) + 
