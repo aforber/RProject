@@ -54,7 +54,8 @@ names(weath8) <- paste0(names(weath8), "8")
 # then we only have like one week for each district?
 
 # MERGE INTER AND INCID
-datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"))
+datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), 
+              by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"), all=T)
 
 # MERGE WITH WEATHER2
 dat <- merge(datf, weath2, by.x = c("District", "Epiweek", "Epiyear"), 
@@ -70,17 +71,17 @@ dat <- merge(dat, weath8, by.x = c("District", "Epiweek", "Epiyear"),
 # That is suspicious
 
 #---------------
-# REMOVE NAS 
+# REMOVE NAS? 
 #---------------
 
 # missing data for SQKM, Province, Region, u5total, cases
 # (keep NA for IRS week and year)
 # maybe keep na for sqkm, province and region as well
 
-summary(aggr(dat[,1:18]))
+summary(aggr(dat[,11:18]))
 
-dat <- dat[complete.cases(dat[, c(1:11, 14:18)]), ]
-
+# only remove missing cases and populations
+dat <- dat[!with(dat,is.na(cases) & is.na(u5total)),]
 
 # EXPORT NEW DATA
 write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv')
@@ -94,18 +95,23 @@ write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/M
 # INCIDENCE
 dat$incid <- dat$cases/dat$u5total*1000
 
+
 # SORT
 dat2 <- dat[with(dat, order("District", "Epiyear", "Epiweek")),]
 dat3 <- arrange(dat, Epiyear, Epiweek)
 dat4 <- with(dat, dat[order(DISTCODE, Epiyear, Epiweek),])
+# these I think are all working, I just only have one observation
+# for each district, which does not seems right and is inter's fault
 
 
 # IRS PROTECTION (spray)
 # 75% protection 6 months after the start
-# 1 at 0 weeks, .75 at 
+# 1 at 0 weeks, .75 at 24 weeks 
+# (0.01041667 decrease each week)
 
 # ITN PROTECTION (nets)
-# 60% protective 24 months after the start
+# 60% protective 96 months after the start
+# (0.004166667 decrease each week)
 
 
 #----------------
