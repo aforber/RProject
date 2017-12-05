@@ -8,13 +8,7 @@ rm(list=ls())
 
 library(maptools) 
 library(rgdal)
-library(ggplot2)
-library(VIM)
 
-library(RColorBrewer)
-library(sp)
-library(lattice)
-library(latticeExtra) # For layer()
 
 #------------
 # LOAD DATA
@@ -54,14 +48,24 @@ names(weath8) <- paste0(names(weath8), "8")
 # then we only have like one week for each district?
 
 # MERGE INTER AND INCID
-# this only adds the epi year and week to the first distcode obs
-# instead of to all of them, don't think that's what we want
-datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), 
-              by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"), all=T)
 
-# this creates repeats where there are two interventions, is that what we want?
-datf <- merge(incid, inter, by.x = c("DISTCODE"), 
-              by.y = c("DISTCODE"), all=T, sort=F)
+# SEPARATE INTERVENTION DATA TO MERGE EACH SEPARATELY
+# ADD INDICATOR COLUMNS WHERE THERE WAS INTERVENTION
+inter$IRS <- ifelse(is.na(inter$IRSyear), 0, 1)
+inter$ITN <- ifelse(is.na(inter$ITNyear), 0, 1)
+interITN <- inter[,c(1, 4:5,7)]
+interIRS <- inter[,c(1:3,6)]
+
+# MERGE EACH
+datf <- merge(incid, interITN, by.x = c("Epiyear", "Epiweek", "DISTCODE"), 
+              by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"), all=T)
+datf <- merge(datf, interIRS, by.x = c("Epiyear", "Epiweek", "DISTCODE"), 
+              by.y = c("IRSyear", "IRSepiWeek", "DISTCODE"), all=T)
+
+# CHANGE INTERVENTION COL NAS TO 0
+datf$IRS <- ifelse(is.na(datf$IRS), 0, 1)
+datf$ITN <- ifelse(is.na(datf$ITN), 0, 1)
+
 
 # MERGE WITH WEATHER2
 dat <- merge(datf, weath2, by.x = c("District", "Epiweek", "Epiyear"), 
@@ -76,20 +80,6 @@ dat <- merge(dat, weath8, by.x = c("District", "Epiweek", "Epiyear"),
 # I'm surprised there are no missing values since we lagged.
 # That is suspicious
 
-#---------------
-# REMOVE NAS? 
-#---------------
-
-# missing data for SQKM, Province, Region, u5total, cases
-# (keep NA for IRS week and year)
-# maybe keep na for sqkm, province and region as well
-
-summary(aggr(dat[,11:18]))
-
-# only remove missing cases and populations
-dat <- dat[!with(dat,is.na(cases) & is.na(u5total)),]
-
-
 #-----------------
 # CREATE INCIDENCE
 #-----------------
@@ -97,21 +87,13 @@ dat <- dat[!with(dat,is.na(cases) & is.na(u5total)),]
 # INCIDENCE
 dat$incid <- dat$cases/dat$u5total*1000
 
+# REMOVE USELESS X COL
+dat$X <- NULL
 
 
+#-----------------
 # EXPORT NEW DATA
+#-----------------
 write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv')
 
-
-
-#----------------
-### QUESTIONS 11.27
-# 1. I merged off of ITN week and year because IRS had so much missing,
-# was that right??? 
-
-# 2. Do we need to do a regression?
-# From description it seems like just 
-# "exploratory analysis figures, mapsof incidence, and explore, 
-# at the very least, basic rela-tionships between the independent 
-# variables and the outcome"
 

@@ -4,6 +4,17 @@
 # CREATED DEC 4 2017
 #-------------------------
 
+rm(list=ls())
+
+library(ggplot2)
+library(VIM)
+
+library(RColorBrewer)
+library(sp)
+library(lattice)
+library(latticeExtra) # For layer()
+
+poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
 
 
 #----------------
