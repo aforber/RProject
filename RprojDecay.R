@@ -1,10 +1,10 @@
 #--------------------------
 # R PYTHON FINAL PROJECT
 # ALYSSA FORBER
-# CREATED NOV 15 2017
+# CREATED DEC 4 2017
 #-------------------------
 
-data <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv', header=T)
+dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv', header=T)
 
 
 

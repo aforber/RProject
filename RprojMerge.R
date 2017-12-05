@@ -54,8 +54,14 @@ names(weath8) <- paste0(names(weath8), "8")
 # then we only have like one week for each district?
 
 # MERGE INTER AND INCID
+# this only adds the epi year and week to the first distcode obs
+# instead of to all of them, don't think that's what we want
 datf <- merge(incid, inter, by.x = c("Epiyear", "Epiweek", "DISTCODE"), 
               by.y = c("ITNyear", "ITNepiWeek", "DISTCODE"), all=T)
+
+# this creates repeats where there are two interventions, is that what we want?
+datf <- merge(incid, inter, by.x = c("DISTCODE"), 
+              by.y = c("DISTCODE"), all=T, sort=F)
 
 # MERGE WITH WEATHER2
 dat <- merge(datf, weath2, by.x = c("District", "Epiweek", "Epiyear"), 
