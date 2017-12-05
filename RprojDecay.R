@@ -7,7 +7,11 @@
 rm(list=ls())
 
 dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv', header=T)
-
+# 4392 OBS
+sum(dat$IRS)
+#[1] 35
+sum(dat$ITN)
+#[1] 114
 
 # MAKE DATE COLUMN
 
@@ -15,13 +19,9 @@ dat$time <- (dat$Epiyear-2009)*12 + dat$Epiweek
 
 # MAKE DIFFERNCE FROM INTERVENTION TO CURRENT DATA
 
-n.distcode <- length(unique(dat$DISTCODE))
-unique.distcode <- unique(dat$DISTCODE)
-
-for (i in 1:n.distcode)
-
-
-# MAKE DECAY FOR ITN
+#-------------------- 
+# MAKE DIFF FOR ITN
+#-------------------- 
 
 enddf <- NULL
 
@@ -58,8 +58,53 @@ for (j in levels(dat$District)){
   }
   enddf <- rbind(enddf, df)
 } 
+
+sum(enddf$IRS)
+#[1] 35
+sum(enddf$ITN)
+#[1] 114
+
+#------------------  
+# DO AGAIN FOR IRS
+#------------------ 
+
+dat <- enddf
+enddf2 <- NULL
+
+
+for (j in levels(dat$District)){
+  df <- subset(dat, dat$District %in% j)
+  timeIRS <- df$time[df$IRS==1]
+  df[,"decayIRS"] <- NA
   
-  
+  # for only one interevention 
+  if (length(timeIRS)==1){
+    
+    # if it's before
+    for (i in 1:dim(df)[1]){
+      if (df[i,]$time >= timeIRS){
+        df[i,]$decayIRS <- df[i,]$time - timeIRS
+      }
+    }
+    
+    # for when there are two intervention
+  } else if (length(timeIRS)==2){
+    for (i in 1:dim(df)[1]){
+      if (df[i,]$time >= timeIRS[1] & df[i,]$time < timeIRS[2]){
+        # if it's after the first
+        df$decayIRS <- df[i,]$time - timeIRS[1] 
+      } else if (df[i,]$time >= timeIRS[2]){
+        # if it's after the second
+        df$decayIRS <- df[i,]$time - timeIRS[2]
+      } else{
+        
+      } 
+    }
+  } else{
+    
+  }
+  enddf2 <- rbind(enddf2, df)
+} 
 
 
 
