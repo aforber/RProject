@@ -106,19 +106,13 @@ for (j in levels(dat$District)){
   enddf2 <- rbind(enddf2, df)
 } 
 
+data <- enddf2
 
 
-# MULTIPLY DIFFERENCE BY RATE OF DECAY FOR EACH INTERVENTION
-
-
-
-
-
-# SORT
-#dat2 <- dat[with(dat, order("District", "Epiyear", "Epiweek")),]
-#dat3 <- arrange(dat, Epiyear, Epiweek)
-#dat4 <- with(dat, dat[order(DISTCODE, Epiyear, Epiweek),])
-
+#-------------------
+# MULTIPLY DIFFERENCE BY RATE OF DECAY 
+#FOR EACH INTERVENTION AND SUBTRACT 1
+#-------------------
 
 # IRS PROTECTION (spray)
 # 75% protection 6 months after the start
@@ -129,4 +123,10 @@ for (j in levels(dat$District)){
 # 60% protective 96 months after the start
 # (0.004166667 decrease each week)
 
+# IRS 0.01041667 PER WEEK
+data$decayIRS <- 1 - data$decayIRS*0.01041667
 
+# ITN 0.004166667 PER WEEK
+data$decayITN <- 1 - data$decayITN*0.004166667
+
+write.csv(data, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData.csv')
