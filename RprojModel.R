@@ -59,8 +59,8 @@ summary(mod3)
 # not able to converge when putting weather data in
 # try to center and scale the vars?
 
-# PSFC = 2 # SD = 8 # TAVG = 4 (BARELY) # RAIN = 2
 
+# JUST SCALING THE ONES I WANT TO USE
 dat$psfc22 <- scale(dat$psfc2)
 dat$sd88 <- scale(dat$sd8)
 dat$tavg44 <- scale(dat$tavg4)
@@ -68,6 +68,37 @@ dat$raint22 <- scale(dat$raint2)
 
 mod4 <- glmer(cases ~ decayITN + decayIRS + tavg44 + (1 | District),
               family="poisson", offset = log(u5total), data = dat)
-
 summary(mod4)
+
+# lowest AIC with all four weather vars
+mod5 <- glmer(cases ~ decayITN + decayIRS + tavg44 + raint22 + sd88 + psfc22 + (1 | District),
+              family="poisson", offset = log(u5total), data = dat)
+summary(mod5)
+
+# TRY TO ASSES CONVERGENCE 
+# check singularity- fine
+diag.vals <- getME(mod5,"theta")[getME(mod5,"lower") == 0]
+any(diag.vals < 1e-6)
+
+#recompute gradient and Hessian with Richardson extrapolation
+devfun <- update(mod5, devFunOnly=TRUE)
+if (isLMM(mod5)) {
+  pars <- getME(mod5,"theta")
+} else {
+  ## GLMM: requires both random and fixed parameters
+  pars <- getME(mod5, c("theta","fixef"))
+}
+if (require("numDeriv")) {
+  cat("hess:\n"); print(hess <- hessian(devfun, unlist(pars)))
+  cat("grad:\n"); print(grad <- grad(devfun, unlist(pars)))
+  cat("scaled gradient:\n")
+  print(scgrad <- solve(chol(hess), grad))
+}
+## compare with internal calculations:
+mod5@optinfo$derivs
+
+#restart the fit from the original value (or
+## a slightly perturbed value):
+mod5.restart <- update(mod5, start=pars)
+
 
