@@ -15,7 +15,7 @@ sum(dat$ITN)
 
 # MAKE DATE COLUMN
 
-dat$time <- (dat$Epiyear-2009)*12 + dat$Epiweek
+dat$time <- (dat$Epiyear-2009)*52 + dat$Epiweek
 
 # MAKE DIFFERNCE FROM INTERVENTION TO CURRENT DATA
 
@@ -24,7 +24,7 @@ dat$time <- (dat$Epiyear-2009)*12 + dat$Epiweek
 #-------------------- 
 
 enddf <- NULL
-
+# add logic to stop at 0!
 for (j in levels(dat$District)){
   df <- subset(dat, dat$District %in% j)
   timeITN <- df$time[df$ITN==1]
@@ -37,6 +37,7 @@ for (j in levels(dat$District)){
     for (i in 1:dim(df)[1]){
       if (df[i,]$time >= timeITN){
         df[i,]$decayITN <- df[i,]$time - timeITN
+        df[i,]$decayITN <- ifelse(df[i,]$decayITN<0, 0, df[i,]$decayITN)
       }
     }
     
@@ -45,10 +46,12 @@ for (j in levels(dat$District)){
     for (i in 1:dim(df)[1]){
       if (df[i,]$time >= timeITN[1] & df[i,]$time < timeITN[2]){
         # if it's after the first
-        df$decayITN <- df[i,]$time - timeITN[1] 
+        df$decayITN <- df[i,]$time - timeITN[1]
+        df[i,]$decayITN <- ifelse(df[i,]$decayITN<0, 0, df[i,]$decayITN)
       } else if (df[i,]$time >= timeITN[2]){
         # if it's after the second
         df$decayITN <- df[i,]$time - timeITN[2]
+        df[i,]$decayITN <- ifelse(df[i,]$decayITN<0, 0, df[i,]$decayITN)
       } else{
         
       } 
@@ -84,6 +87,7 @@ for (j in levels(dat$District)){
     for (i in 1:dim(df)[1]){
       if (df[i,]$time >= timeIRS){
         df[i,]$decayIRS <- df[i,]$time - timeIRS
+        df[i,]$decayIRS <- ifelse(df[i,]$decayIRS<0, 0, df[i,]$decayIRS)
       }
     }
     
@@ -92,10 +96,12 @@ for (j in levels(dat$District)){
     for (i in 1:dim(df)[1]){
       if (df[i,]$time >= timeIRS[1] & df[i,]$time < timeIRS[2]){
         # if it's after the first
-        df$decayIRS <- df[i,]$time - timeIRS[1] 
+        df$decayIRS <- df[i,]$time - timeIRS[1]
+        df[i,]$decayIRS <- ifelse(df[i,]$decayIRS<0, 0, df[i,]$decayIRS)
       } else if (df[i,]$time >= timeIRS[2]){
         # if it's after the second
         df$decayIRS <- df[i,]$time - timeIRS[2]
+        df[i,]$decayIRS <- ifelse(df[i,]$decayIRS<0, 0, df[i,]$decayIRS)
       } else{
         
       } 
@@ -129,4 +135,4 @@ data$decayIRS <- 1 - data$decayIRS*0.01041667
 # ITN 0.004166667 PER WEEK
 data$decayITN <- 1 - data$decayITN*0.004166667
 
-write.csv(data, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData.csv')
+write.csv(data, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData2.csv')

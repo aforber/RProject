@@ -14,23 +14,17 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The write-up should include abackground section with a literature review and citations (at least one page), a descriptionof the problem and data (approximately one page), results (no page expectation, but thereshould  be  4-5  figures  and  at  least  one  should  be  a  map),  conclusions,  references  and  anysupplemental material you choose to include.
+The write-up should include a background section with a literature review and citations (at least one page), a description of the problem and data (approximately one page), results (no page expectation, but thereshould  be  4-5  figures  and  at  least  one  should  be  a  map),  conclusions,  references  and  any supplemental material you choose to include.
 
+The incidence data today are likelyrelated to exposure up to 14 days prior and the effects of weather and temperature, etc, are likely related to exposure at an uncertain time before that.  This time is typically thought tobe 2, 4 or 8 weeks from the day the person showed up in the health center.  You are expected to create the lagged variables and explore their relationships with malaria incidence.
 
-
-
-we can assume that the IRS (indoor residual spraying) variable has 75% protection6  months  after  the  start  date.   The  ITNs  (insecticide  treated  bednets)  are  thought  to  be
-60% protective 24 months after the start date.  When merging these data, these coveragesneed to be applied to the subsequent weeks after the start week.  For simplicity,  you canassume a constant decrease per week to achieve the protection described above, where wecan  assume  that  IRS  and  ITNs  start  with  100%  effectiveness  at  the  start  week
-
-
-The incidence data today are likelyrelated to exposure up to 14 days prior and the effects of weather and temperature, etc, arelikely related to exposure at an uncertain time before that.  This time is typically thought tobe 2, 4 or 8 weeks from the day the person showed up in the health center.  You are expectedto create the lagged variables and explore their relationships with malaria incidence.
-
-## Background (1 page)
+## Background (1 page) (with a literature review and citations)
 
 - malaria affecting a lot of people
 - life threatening, # people kills
 - Mozambique stats
 - preventions include insecticide treated bed-nets, indoor residual spraying
+- temporary effect and the protection wears off
 - seasonal effect, rainy season, mosquitos bread in standing water
 - after rain they breed and increase in number which increases bites/infections
 - some time after rain we see rise in cases which is unknown, and something that will be explored in this analysis
@@ -39,9 +33,11 @@ The incidence data today are likelyrelated to exposure up to 14 days prior and t
 
 $\qquad$ The data for this analysis include incidence data, malaria intervention data, weather data, and spatial data. The incidence data contains information on the weekly number of cases of malaria reported by districts along with information about each district, and spans from 2010 to 2017. The district information includes square kilometers, province, region, population, and x and y coordinates. Incidence was calculated by dividing cases by the population and multiplying by 1000. The intervention data contains the week and year for each district that the two preventative interventions occured-- insecticide treated bed nets (ITN) and indoor residual spraying (IRS). The weather data originally contained daily information by district on five weather measures-- rainfall, temperature, relative humidity, saturation vapor pressure deficit, and surface barometric pressure. All variables in this dataset were averaged by week--except rainfall which was summed--in order to be merge with the other datasets. Lastly the spatial data was geospatial information on the country of Mozambique in order to map the other data spatially. Data was merged based on the district, week, and year.
 
-$\qquad$ In order to capture the seasonal effect of weather on malaria trends, the weather information has a lagged relationship with the incidenence data. With this lag being unknown, the incidence data was lagged by two, four, and eight weeks to the weather data. This analysis also explored the protection of the interventions over time, in which 100% protection from malaria is assumed at the start week that slowly decays. RATES OF DECAY.
+$\qquad$ In order to capture the seasonal effect of weather on malaria trends, the weather information has a lagged relationship with the incidenence data. With this lag being unknown, the incidence data was lagged by two, four, and eight weeks to the weather data. This analysis also explored the protection of the interventions over time, in which 100% protection from malaria is assumed at the start week that slowly decays at a linear rate. We assumed 75% protection 6 months after the start for IRS, which translates to a 0.01042 decrease in protection each week, and we assumed 60% protective 96 months after the start for ITN, which translates to a 0.0042 decrease each week. Variables that contained the information for the decay in protection were created for each intervention treatment to be used for analysis. 
 
 ## Results 
+
+$\qquad$ 
 
 ## Conclusions
 
@@ -63,8 +59,12 @@ https://www.pilgrimafrica.org/malaria/
 https://malariajournal.biomedcentral.com/articles/10.1186/1475-2875-12-363
 
 
+## Reproductable Research Information
 
+All work and materials can be found at https://github.com/aforber/RProject.
 
 ## Appendix
+
+
 
 

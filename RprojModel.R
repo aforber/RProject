@@ -6,7 +6,7 @@
 
 rm(list=ls())
 
-dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData.csv', header=T)
+dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData2.csv', header=T)
 
 library(lme4)
 library(nlme)
@@ -43,7 +43,6 @@ plot(dat$sd8, dat$rh8)
 
 
 
-
 mod1 <- glmer(cases ~ (1 | District),
               family="poisson", offset = log(u5total), data = dat)
 summary(mod1)
@@ -56,9 +55,6 @@ mod3 <- glmer(cases ~ decayITN + decayIRS + Region + (1 | District),
               family="poisson", offset = log(u5total), data = dat)
 summary(mod3)
 
-# not able to converge when putting weather data in
-# try to center and scale the vars?
-
 
 # JUST SCALING THE ONES I WANT TO USE
 dat$psfc22 <- scale(dat$psfc2)
@@ -66,39 +62,27 @@ dat$sd88 <- scale(dat$sd8)
 dat$tavg44 <- scale(dat$tavg4)
 dat$raint22 <- scale(dat$raint2)
 
+
 mod4 <- glmer(cases ~ decayITN + decayIRS + tavg44 + (1 | District),
               family="poisson", offset = log(u5total), data = dat)
 summary(mod4)
 
+
 # lowest AIC with all four weather vars
-mod5 <- glmer(cases ~ decayITN + decayIRS + tavg44 + raint22 + sd88 + psfc22 + (1 | District),
-              family="poisson", offset = log(u5total), data = dat)
+datLim <- subset(dat, DISTCODE!=1101)
+datLim$District <- as.factor(datLim$District)
+datLim$DISTCODE <- as.factor(datLim$DISTCODE)
+# try as.factor(District)
+mod5 <- glmer(cases ~ decayITN + decayIRS + tavg44 + raint22 + sd88 + psfc22 + (1 | DISTCODE),
+              family="poisson", offset = log(u5total), data = datLim)
 summary(mod5)
-
-# TRY TO ASSES CONVERGENCE 
-# check singularity- fine
-diag.vals <- getME(mod5,"theta")[getME(mod5,"lower") == 0]
-any(diag.vals < 1e-6)
-
-#recompute gradient and Hessian with Richardson extrapolation
-devfun <- update(mod5, devFunOnly=TRUE)
-if (isLMM(mod5)) {
-  pars <- getME(mod5,"theta")
-} else {
-  ## GLMM: requires both random and fixed parameters
-  pars <- getME(mod5, c("theta","fixef"))
-}
-if (require("numDeriv")) {
-  cat("hess:\n"); print(hess <- hessian(devfun, unlist(pars)))
-  cat("grad:\n"); print(grad <- grad(devfun, unlist(pars)))
-  cat("scaled gradient:\n")
-  print(scgrad <- solve(chol(hess), grad))
-}
-## compare with internal calculations:
-mod5@optinfo$derivs
-
-#restart the fit from the original value (or
-## a slightly perturbed value):
-mod5.restart <- update(mod5, start=pars)
+# they're could be influencial points, but that's beyond the scope of the class etc
 
 
+## TRY TO RESCALE DECAY VARS
+dat$decayIRS2 <- scale(dat$decayIRS)
+dat$decayITN2 <- scale(dat$decayITN)
+
+mod6 <- glmer(cases ~ decayITN2 + decayIRS2 + tavg44 + raint22 + sd88 + psfc22 + (1 | District),
+              family="poisson", offset = log(u5total), data = dat, nAGQ=4)
+summary(mod6)
