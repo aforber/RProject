@@ -6,7 +6,7 @@
 
 rm(list=ls())
 
-dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData2.csv', header=T)
+dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv', header=T)
 
 library(lme4)
 library(nlme)
