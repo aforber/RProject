@@ -41,12 +41,6 @@ names(weath8) <- paste0(names(weath8), "8")
 # MERGE
 #----------------
 
-# Why don't the dates for the two interventions match up 
-# for inter? I'm merging off the ITN dates because they
-# are all there... 
-# merging with inter makes us loose a bunch of data
-# then we only have like one week for each district?
-
 # MERGE INTER AND INCID
 
 # SEPARATE INTERVENTION DATA TO MERGE EACH SEPARATELY
@@ -77,8 +71,6 @@ dat <- merge(dat, weath4, by.x = c("District", "Epiweek", "Epiyear"),
 dat <- merge(dat, weath8, by.x = c("District", "Epiweek", "Epiyear"), 
              by.y = c("District8", "Epiweek8", "year8"))
 
-# I'm surprised there are no missing values since we lagged.
-# That is suspicious
 
 #-----------------
 # CREATE INCIDENCE

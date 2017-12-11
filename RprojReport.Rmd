@@ -35,11 +35,17 @@ $\qquad$ The data for this analysis include incidence data, malaria intervention
 
 $\qquad$ In order to capture the seasonal effect of weather on malaria trends, the weather information has a lagged relationship with the incidenence data. With this lag being unknown, the incidence data was lagged by two, four, and eight weeks to the weather data. This analysis also explored the protection of the interventions over time, in which 100% protection from malaria is assumed at the start week that slowly decays at a linear rate. We assumed 75% protection 6 months after the start for IRS, which translates to a 0.01042 decrease in protection each week, and we assumed 60% protective 96 months after the start for ITN, which translates to a 0.0042 decrease each week. Variables that contained the information for the decay in protection were created for each intervention treatment to be used for analysis. 
 
-## Results 
+## Methods 
+
+$\qquad$ In order to model the relationship between malaria cases and the interventions while controlling for the effects of weather we ran a Poisson regression with glmer. The outcome was cases with an offset for population, including the decay of ITN protection and IRS protecting as covariates while also controlling for rainfall, temperature, relative humidity, and surface barometric pressure. We did not also control for saturation vapor pressure deficit as it was highly correlated with relative humidity which gave a better model fit when used instead. Lastly, a random intercept and slope for district was added in order to account for the correlation of repeated measures and the correlation within districts.
+
+## Results
 
 $\qquad$ 
 
 ## Conclusions
+
+$\qquad$ 
 
 ## References
 
@@ -62,9 +68,4 @@ https://malariajournal.biomedcentral.com/articles/10.1186/1475-2875-12-363
 ## Reproductable Research Information
 
 All work and materials can be found at https://github.com/aforber/RProject.
-
-## Appendix
-
-
-
 

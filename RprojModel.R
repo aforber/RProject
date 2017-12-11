@@ -40,6 +40,7 @@ cor.test(dat$cases, dat$psfc8)
 
 # these two might give colinearity issues
 plot(dat$sd8, dat$rh8)
+cor.test(dat$sd8, dat$rh8)
 
 
 
@@ -61,6 +62,7 @@ dat$psfc22 <- scale(dat$psfc2)
 dat$sd88 <- scale(dat$sd8)
 dat$tavg44 <- scale(dat$tavg4)
 dat$raint22 <- scale(dat$raint2)
+dat$rh88 <- scale(dat$rh8)
 
 
 mod4 <- glmer(cases ~ decayITN + decayIRS + tavg44 + (1 | District),
@@ -86,3 +88,27 @@ dat$decayITN2 <- scale(dat$decayITN)
 mod6 <- glmer(cases ~ decayITN2 + decayIRS2 + tavg44 + raint22 + sd88 + psfc22 + (1 | District),
               family="poisson", offset = log(u5total), data = dat, nAGQ=4)
 summary(mod6)
+
+#-----------------
+## FINAL MODEL
+#-----------------
+# there is no fixing the issue, will use the scale weather vars
+# and not change anything else
+# and not scaling params because it doesn't add anything
+# and just make interpreting more difficult
+
+
+mod <- glmer(cases ~ decayITN + decayIRS + tavg4 + raint2 + rh8 + psfc2 + (1 | DISTCODE),
+             family="poisson", offset = log(u5total), data = dat)
+summary(mod) # AIC= 85666.7 
+
+# MAKE ESTIMATE TABLE
+
+est <- as.data.frame(summary(mod)$coef)
+est$Lower <- est$Estimate -1.96*est$`Std. Error`
+est$Upper <- est$Estimate +1.96*est$`Std. Error`
+est <- round(est[,c(1,5:6,4)], digits=3)
+rownames(est) <- c("Intercept", "ITN Decay", "IRS Decay", "Temperatue", "Rainfall",
+                   "Relative Humididy", "Barometric Pressure")
+
+write.csv(est, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/Estimates.csv')
