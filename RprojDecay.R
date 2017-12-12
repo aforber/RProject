@@ -6,7 +6,7 @@
 
 rm(list=ls())
 
-dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv', header=T)
+dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData2.csv', header=T)
 # 4392 OBS
 sum(dat$IRS)
 #[1] 35
@@ -143,5 +143,9 @@ data$decayITN <- 1 - data$decayITN*0.004166667
 data$decayIRS <- ifelse(data$decayIRS<0, 0, data$decayIRS)
 data$decayITN <- ifelse(data$decayITN<0, 0, data$decayITN)
 
+# CHANGE ANY NA TO 0
+data$decayIRS <- ifelse(is.na(data$decayIRS), 0, data$decayIRS)
+data$decayITN <- ifelse(is.na(data$decayITN), 0, data$decayITN)
 
-write.csv(data, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv')
+
+write.csv(data, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData4.csv')

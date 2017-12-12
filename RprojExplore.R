@@ -17,6 +17,8 @@ library(latticeExtra) # For layer()
 
 dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv', header=T)
 poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
+dat2 <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData.csv', header=T)
+dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv', header=T)
 
 
 #----------------
@@ -139,6 +141,8 @@ dat$tavg44 <- scale(dat$tavg4)
 dat$raint22 <- scale(dat$raint2)
 dat$rh88 <- scale(dat$rh8)
 dat$cases0 <- scale(dat$cases)
+dat$decayIRS0 <- scale(dat$decayIRS)
+dat$decayITN0 <- scale(dat$decayITN)
 
 dat2 <- dat[complete.cases(dat[ , 13]),]
 
@@ -152,9 +156,27 @@ legend(10, -1.5, c("Rain lag 2", "Ave temp lag 4", "Rel Hum lag 8","Pressure lag
        text.col = c("blue", "red", "purple", "deepskyblue", "green4"), 
        cex = .9, bty = "n")
 
-
+# just cases
 plot(smooth.spline(dat2$Epiweek, dat2$cases), type="l", col="deepskyblue", xlab="Epidemiology week", 
      ylab="Standard deviations", main = "Normalized Cases and Lagged Weather", lwd=2)
+
+
+# for one year and district look at intervention
+
+dat$decayIRS0 <- ifelse(is.na(dat$decayIRS), 0, dat$decayIRS)
+dat$decayITN0 <- ifelse(is.na(dat$decayITN), 0, dat$decayITN)
+dat2 <- dat[complete.cases(dat[ , 13]),]
+
+plot(smooth.spline(dat2$Epiweek[dat2$Epiyear==2016&dat2$DISTCODE==302], dat2$cases0[dat2$Epiyear==2016&dat2$DISTCODE==302]), 
+     type="l", col="blue", ylim=c(-0.5,1.5), xlab="Epidemiology week", 
+     ylab="Standard deviations", main = "Normalized Cases, IRS Intervention,
+     & Rainfall for 2016 Angoche District", lwd=2)
+lines(smooth.spline(dat2$Epiweek[dat2$Epiyear==2016&dat2$DISTCODE==302], dat2$decayIRS0[dat2$Epiyear==2016&dat2$DISTCODE==302]), 
+      type="l", col="darkolivegreen3", lwd=2)
+lines(smooth.spline(dat$Epiweek, dat$raint22,df=10), type="l", col="red", lwd=2)
+legend(7, 0, c("Cases", "IRS Protection", "Rain lag 2"), 
+       text.col = c("blue","green4", "red"), 
+       cex = .9, bty = "n")
 
 
 #-------------------
@@ -165,9 +187,10 @@ plot(smooth.spline(dat2$Epiweek, dat2$cases), type="l", col="deepskyblue", xlab=
 # can't have duplicates though...
 # which means I have to only look at once instance (week)
 # but that's not very informative..?
-rownames(dat) <- dat$DISTCODE
+week <- subset(dat, Epiyear==2016 & Epiweek==8)
+rownames(week) <- week$DISTCODE
 # sp package # allows you to create your own spatial poly data frame
-polydat <- SpatialPolygonsDataFrame(poly, dat)
+polydat <- SpatialPolygonsDataFrame(poly, week)
 
 #--------------------------------------------
 # FROM NOTES10.17.17&SPATIALGRAPHICS

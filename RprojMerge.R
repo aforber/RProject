@@ -6,10 +6,6 @@
 
 rm(list=ls())
 
-library(maptools) 
-library(rgdal)
-
-
 #------------
 # LOAD DATA
 #------------
@@ -17,7 +13,6 @@ library(rgdal)
 inter <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/intervention.csv', header=T)
 incid <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/incidence.csv')
 weath <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/CleanWeather.csv', header=T)
-poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
 
 
 #--------------
@@ -42,6 +37,12 @@ names(weath8) <- paste0(names(weath8), "8")
 #----------------
 
 # MERGE INTER AND INCID
+
+
+# REMOVE DASHES FROM INCID DISTRICT NAMES
+incid$District <- gsub("-", " ", incid$District)
+incid$District <- gsub("  ", " ", incid$District)
+incid$District <- gsub("  ", " ", incid$District)
 
 # SEPARATE INTERVENTION DATA TO MERGE EACH SEPARATELY
 # ADD INDICATOR COLUMNS WHERE THERE WAS INTERVENTION
@@ -86,6 +87,6 @@ dat$X <- NULL
 #-----------------
 # EXPORT NEW DATA
 #-----------------
-write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData.csv')
+write.csv(dat, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/MergedData2.csv')
 
 

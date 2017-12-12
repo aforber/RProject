@@ -64,6 +64,9 @@ $\qquad$
 \centerline{Figure 3: Normalized malaria cases and weather variables lagged by week}
 \centerline{\includegraphics[height=4.1in]{/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/weather.png}}
 
+\centerline{Figure 4: Normalized malaria cases with IRS protection and rainfall for 2016 in the Agnoche District}
+\centerline{\includegraphics[height=4.1in]{/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/IRS.png}}
+
 
 ## References
 
