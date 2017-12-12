@@ -7,18 +7,16 @@
 rm(list=ls())
 library(maptools)
 
-library(ggplot2)
-library(VIM)
-
 library(RColorBrewer)
 library(sp)
+
+
 library(lattice)
 library(latticeExtra) # For layer()
 
 dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv', header=T)
 poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
-dat2 <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData.csv', header=T)
-dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv', header=T)
+dat2 <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData4.csv', header=T)
 
 
 #----------------
@@ -183,31 +181,19 @@ legend(7, 0, c("Cases", "IRS Protection", "Rain lag 2"),
 # MERGE SPATIAL DATA
 #-------------------
 
-# get rownames to match
-# can't have duplicates though...
-# which means I have to only look at once instance (week)
-# but that's not very informative..?
-week <- subset(dat, Epiyear==2016 & Epiweek==8)
+week <- subset(dat, Epiyear==2013 & Epiweek==20)
 rownames(week) <- week$DISTCODE
 # sp package # allows you to create your own spatial poly data frame
 polydat <- SpatialPolygonsDataFrame(poly, week)
 
 #--------------------------------------------
 # FROM NOTES10.17.17&SPATIALGRAPHICS
-# Basic Mozambique Map for total rainfall, 2016 week 8
-spplot(polydat, "rainTot", main = "Rainfall total", sub = "2016 week 8")
 
-#display.brewer.all()
 
-my.palette <- brewer.pal(n = 7, name = "YlGnBu") # want yellow, green, blue color palette
 # Different color scheme and cuts
-spplot(polydat, "rainTot", col.regions = my.palette, cuts = 6, col = "transparent", main = "Rainfall total", sub = "2016 week 8")
+tempPal <- brewer.pal(n = 7, name = "YlOrRd")
+spplot(polydat, "incid", col.regions = tempPal, cuts = 6, col = "transparent", main = "Malaria Incidene", sub = "2016 week 8")
 
-# Temperature
-colours <- rainbow(6, start=0, end=1/6) # 6 colors, stopping at 1/6 makes a heat map
-# since it doesn't get to go all the way through the rainbow
-cols <- rev(colours)
-spplot(polydat, "tavg", col.regions = cols, cuts = 5, main = "Ave temperature 2016 week 8")
 
 
 # MULTIPLE #
@@ -217,29 +203,21 @@ rainPal <- brewer.pal(n = 6, name = "YlGnBu")
 #sdPal <- brewer.pal(n = 6, name = "Greens")
 
 #trellis.par.set(sp.theme(regions=list(col = rainPal)))
-spplot(polydat, c("tavg", "rainTot", "rh", "sd"), names.attr = c("Ave temp", "Total rain", "Rel Humidity", 
-                                                                 "Saturation Pressure Deficit"), 
-       colorkey=list(space="right"), scales = list(draw = TRUE), main = "Mozambique weather, Week 8, 2016", 
+spplot(polydat, c("cases", "raint4","tavg2"), names.attr = c("Cases", "Total rain", "Ave temp"), 
+       colorkey=list(space="right"), scales = list(draw = TRUE), main = "Mozambique weather, Week 20, 2013", 
        as.table = TRUE, cuts=5, col.regions = rainPal)
-#------------------------------------------------
-
 
 
 # plot from https://stackoverflow.com/questions/29974535/dates-with-month-and-day-in-time-series-plot-in-ggplot2-with-facet-for-years
-p <- ggplot(data=dat, mapping=aes(x=Epiweek, y=raint, shape=as.factor(Epiyear), color=as.factor(Epiyear))) + 
+p <- ggplot(data=dat, mapping=aes(x=Epiweek, y=cases,  color=as.factor(Epiyear))) + 
   geom_point() +geom_line(aes(group = 1))
 p <- p + facet_grid(facets = as.factor(Epiyear) ~ ., margins = FALSE) + theme_bw()
-p
+p + labs(title = "Malaria Incidence by Year") + labs(y = "Malaria Incidence")
 
-# be cool to add cases to this
+dat1 <- subset(dat, dat$District=="PEMBA")
 
-# also how to account for districts?
-
-
-#----------------
-# REGRESSION?
-#----------------
-
-# describe the temporal and spatial variation in these data  
-# and to draw conclusions about the relationships between the variables.
+p <- ggplot(data=dat1, mapping=aes(x=Epiweek, y=cases,  color=as.factor(Epiyear))) + 
+  geom_point() +geom_line(aes(group = 1))
+p <- p + facet_grid(facets = as.factor(Epiyear) ~ ., margins = FALSE) + theme_bw()
+p + labs(title = "Malaria Incidence by Year in Pemba") + labs(y = "Malaria Incidence")
 
