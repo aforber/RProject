@@ -214,6 +214,7 @@ p <- ggplot(data=dat, mapping=aes(x=Epiweek, y=cases,  color=as.factor(Epiyear))
 p <- p + facet_grid(facets = as.factor(Epiyear) ~ ., margins = FALSE) + theme_bw()
 p + labs(title = "Malaria Incidence by Year") + labs(y = "Malaria Incidence")
 
+# JUST ONE DISTRICT TO MAKE IT EASIER
 dat1 <- subset(dat, dat$District=="PEMBA")
 
 p <- ggplot(data=dat1, mapping=aes(x=Epiweek, y=cases,  color=as.factor(Epiyear))) + 

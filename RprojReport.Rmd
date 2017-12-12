@@ -17,14 +17,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Background 
 
-- malaria affecting a lot of people
-- life threatening, # people kills
-- Mozambique stats
-- preventions include insecticide treated bed-nets, indoor residual spraying
-- temporary effect and the protection wears off
-- seasonal effect, rainy season, mosquitos bread in standing water
-- after rain they breed and increase in number which increases bites/infections
-- some time after rain we see rise in cases which is unknown, and something that will be explored in this analysis
+$\qquad$ Malaria is a leading cause of death globally. The CDC estimates that in 2015 429,000 people died from the disease.$^2$ The highest malaria death rates occur in Africa, and particularly in young children and pregnant women whose immune systems are weaker. As it is spread through mosquito bites, the amount of transmission can vary depending on several factors. Weather and climate are a large part of that, as warmer climates and wetter regions have a higher incidence level due to being more suited for the mosquitos--or vectors-- to breed.$^3$ In addition, lower altitudes are also more suited for these insects. Because of this, there are natural fluxuations in malaria transmission, with lower numbers after dryer seasons and higher numbers following the rainy seasons following the increase in number of mosquitos. Due to the time it takes for mosquitos to breed, eventually infect someone, and for them to show symptoms and get tested, there is a lagged relationship between when the weather became more hospitable to the vector and malaria cases. 
+
+$\qquad$ Some of the prevention methods that are used to help prevention transmission include insecticide treated bed nets (ITNs) and indoor residual spraying (IRS).$^2$ The indoor residual spraying involves spraying the insides of buildings with insecticides.$^1$ Both of these prevention methods are only temporary in decreasing the number of transmissions. Over time, the bed nets tear and the insecticides wear off, and rates rise again over time.$^4$ 
+
+$\qquad$ In this analysis we have explored the amount of protection that these two methods have supplied for Mozambique over the years 2010-2017. During the course of these years, both protection methods were employed across the 142 districts at varying points in time. We modeled then the relationships between malaria cases and the protection that should be supplied to each district after intervention in a decaying manner. In addition, we explored the length of time that there is a lag between weather and incidence. As this exact time frame in unknown for different weather variables, we evaluated several differing lag amounts in order to see how each fit the data. 
+
+
 
 ## Data
 
@@ -34,7 +33,7 @@ $\qquad$ In order to capture the seasonal effect of weather on malaria trends, t
 
 ## Methods 
 
-$\qquad$ In order to model the relationship between malaria cases and the interventions while controlling for the effects of weather we ran a Poisson regression with glmer. The outcome was cases with an offset for population, including the decay of ITN protection and IRS protecting as covariates while also controlling for rainfall, temperature, relative humidity, and surface barometric pressure. We did not also control for saturation vapor pressure deficit as it was highly correlated with relative humidity which gave a better model fit when used instead (see figure 1). Lastly, a random intercept and slope for district was added in order to account for the correlation of repeated measures and the correlation within districts.
+$\qquad$ In order to model the relationship between malaria cases and the interventions while controlling for the effects of weather we ran a Poisson regression with glmer. The outcome was cases with an offset for population, including the decay of ITN protection and IRS protecting as covariates while also controlling for rainfall, temperature, relative humidity, and surface barometric pressure. We did not also control for saturation vapor pressure deficit as it was highly correlated with relative humidity which gave a better model fit when used instead (see figure 1). Lastly, a random intercept and slope for district was added in order to account for the correlation of repeated measures and the correlation within districts. To decide which lag to use for each weather variables, we looked at the amount of correlation between the sets of lagged weather variables and malaria cases and chose the ones with the highest correlation. 
 
 ## Results 
 
@@ -54,9 +53,8 @@ $\qquad$ Figure 3 shows the relationships between the normalized lagged weather 
 
 $\qquad$ The results of our model suggest that there was a counterintuitive relationship between ITN protection and malaria cases. Instead of greater protection lowering rates, we saw that less ITN protection was associated with lower rates of malaria. The results of the IRS protection behaved as we would expect. The higher the IRS protection, the lower the malaria cases. However, while both of these associations were highly significant, they were both incredibly small. For both intervention measures, the difference of cases between full and zero protection was a fraction of a case. So while we are seeing significant results, there do not seem to be clinically significant increases or decreases in malaria cases. 
 
-$\qquad$ The weather covariates we controlled for mostly behaved as others have reported in the past. Increases in temperature or rainfall were associated with a higher number of cases, as well as increases in pressure being associated with a lower number of cases. 
+$\qquad$ The weather covariates we controlled for mostly behaved as others have reported in the past. Increases in temperature or rainfall were associated with a higher number of cases, as well as increases in pressure being associated with a lower number of cases. In additon, we found that between lags of two, four, and eight weeks, rainfall fit best with the two week lag, temperature fit best with a four week lag, relative humidity fit best with an eight week lag, and pressure fit best with a two week lag. 
 
-$\qquad$ 
 
 \centerline{Figure 2: Malaria cases by province}
 \centerline{\includegraphics[height=3.5in]{/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/province.png}}
@@ -76,20 +74,15 @@ $\qquad$
 
 ## References
 
-https://malariajournal.biomedcentral.com/articles/10.1186/1475-2875-12-363
+1: “Indoor Residual Spraying (IRS).” President's Malaria Initiative, 2017, www.pmi.gov/how-we-work/technical-areas/indoor-residual-spraying.
+
+2: “Malaria.” Centers for Disease Control and Prevention, Centers for Disease Control and Prevention, 18 Oct. 2017, www.cdc.gov/malaria/.
+
+3: Paaijmans, Krijn P., et al. “Understanding the Link between Malaria Risk and Climate.” Proceedings of the National Academy of Sciences, vol. 106, no. 33, 18 Aug. 2009, www.pnas.org/content/106/33/13844.full.
+
+4: Smithuis, Frank M, et al. “The Effect of Insecticide-Treated Bed Nets on the Incidence and Prevalence of Malaria in Children in an Area of Unstable Seasonal Transmission in Western Myanmar.” Malaria Journal, 11 Oct. 2013, malariajournal.biomedcentral.com/articles/10.1186/1475-2875-12-363.
 
 
-http://www.who.int/mediacentre/factsheets/fs310/en/index1.html
-
-https://www.newvision.co.ug/new_vision/news/1423973/malaria-leading-cause-death-uganda
-
-http://health.go.ug/programs/national-malaria-control-program
-
-https://www.cdc.gov/malaria/
-
-https://www.pilgrimafrica.org/malaria/
-
-https://malariajournal.biomedcentral.com/articles/10.1186/1475-2875-12-363
 
 
 ## Reproductable Research Information
