@@ -5,6 +5,7 @@
 #-------------------------
 
 rm(list=ls())
+library(maptools)
 
 library(ggplot2)
 library(VIM)
@@ -14,6 +15,7 @@ library(sp)
 library(lattice)
 library(latticeExtra) # For layer()
 
+dat <- read.csv('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/FinalData3.csv', header=T)
 poly <- readShapePoly('/Users/alyssaforber/Documents/Denver/Fall2017/RPython/Moz_admin2.shp', IDvar="DISTCODE")
 
 
@@ -27,12 +29,6 @@ plot(dat$raint ~ dat$Epiyear)
 hist(dat$Epiweek)
 hist(dat$Epiyear)
 
-hist(dat$DISTCODE.x)
-
-# don't know what this var is
-plot(dat$SQKM)
-hist(dat$SQKM)
-
 plot(dat$Province)
 
 plot(dat$Region)
@@ -43,28 +39,25 @@ plot(dat$XCOORD)
 hist(dat$XCOORD)
 hist(dat$YCOORD)
 
-
 hist(dat$IRSyear)
 hist(dat$IRSepiWeek)
 
-# would think this to be more continuous 
-plot(dat$raint)
-hist(dat$raint)
+plot(dat$raint2)
+hist(dat$raint2)
 
-plot(dat$tavg)
-hist(dat$tavg)
+plot(dat$tavg4)
+hist(dat$tavg4)
 
-plot(dat$rh)
-hist(dat$rh)
+plot(dat$rh8)
+hist(dat$rh8)
 
-plot(dat$sd)
-hist(dat$sd)
+plot(dat$sd8)
+hist(dat$sd8)
 
-plot(dat$psfc)
-hist(dat$psfc)
+plot(dat$psfc2)
+hist(dat$psfc2)
 
-plot(dat$cases)
-
+hist(dat$cases)
 
 #----------------
 # RELATIONSHIPS
@@ -72,55 +65,61 @@ plot(dat$cases)
 
 # WEATHER DATA
 
-# see relationship here
-plot(dat$rh ~ dat$tavg)
-plot(dat$rh ~ dat$raint)
-plot(dat$rh ~ dat$psfc)
-# see relationship here
-plot(dat$rh ~ dat$sd)
+plot(dat$rh8 ~ dat$tavg4)
+plot(dat$rh8 ~ dat$raint2)
+plot(dat$rh8 ~ dat$psfc2)
 
-plot(dat$raint ~ dat$tavg)
-plot(dat$raint ~ dat$psfc)
-plot(dat$raint ~ dat$sd)
+plot(dat$rh8 ~ dat$sd8, xlab="Saturation Vapor Pressure (mmHg)", ylab="Relative Humidity (%)",
+     main="Humidity and Vapor Pressure", pch=20)
+
+plot(dat$raint2 ~ dat$tavg)
+plot(dat$raint2 ~ dat$psfc2)
+plot(dat$raint2 ~ dat$sd8)
 
 # see realtionship here
-plot(dat$tavg ~ dat$sd)
+plot(dat$tavg4 ~ dat$sd8)
 # see relationship here
-plot(dat$tavg ~ dat$psfc)
+plot(dat$tavg4 ~ dat$psfc2)
 # some relationship here
-plot(dat$psfc ~ dat$sd)
+plot(dat$psfc2 ~ dat$sd8)
 
 # no weather differences by Region
-boxplot(dat$raint ~ dat$Province)
-boxplot(dat$raint ~ dat$Region)
-boxplot(dat$tavg ~ dat$Region)
-boxplot(dat$tavg ~ dat$Province)
-boxplot(dat$sd ~ dat$Region)
-boxplot(dat$sd ~ dat$Province)
-boxplot(dat$rh ~ dat$Region)
-boxplot(dat$rh ~ dat$Province)
-boxplot(dat$psfc ~ dat$Region)
-boxplot(dat$psfc ~ dat$Province)
+boxplot(dat$raint2 ~ dat$Province)
+boxplot(dat$raint2 ~ dat$Region)
+boxplot(dat$tavg4 ~ dat$Region)
+boxplot(dat$tavg4 ~ dat$Province)
+boxplot(dat$sd8 ~ dat$Region)
+boxplot(dat$sd8 ~ dat$Province)
+boxplot(dat$rh8 ~ dat$Region)
+boxplot(dat$rh8 ~ dat$Province)
+boxplot(dat$psfc2 ~ dat$Region)
+boxplot(dat$psfc2 ~ dat$Province)
 
 # see case difference by providence
-boxplot(dat$cases ~ dat$Province)
+boxplot(dat$cases ~ dat$Province, cex.axis = .65,
+        xlab="Province", ylab="Cases of Malaria",
+        main="Malaria Cases by Province", col="lavenderblush2")
+
 boxplot(dat$cases ~ dat$Region)
 
 
-
-
 # cases with weather 
-plot(dat$cases ~ dat$raint)
-plot(dat$cases ~ dat$tavg)
-plot(dat$cases ~ dat$sd)
-plot(dat$cases ~ dat$rh)
-plot(dat$cases ~ dat$psfc)
+plot(dat$cases ~ dat$raint2)
+plot(dat$cases ~ dat$tavg4)
+plot(dat$cases ~ dat$sd8)
+plot(dat$cases ~ dat$rh8)
+plot(dat$cases ~ dat$psfc2)
 
 plot(dat$cases ~ dat$Epiweek)
 
 plot(dat$cases[dat$Epiyear==2011] ~ dat$Epiweek[dat$Epiyear==2011])
 plot(dat$cases[dat$Epiyear==2012] ~ dat$Epiweek[dat$Epiyear==2012])
-plot(dat$cases[dat$Epiyear==2013] ~ dat$Epiweek[dat$Epiyear==2013])
+
+plot(dat$cases[dat$Epiyear==2013] ~ dat$Epiweek[dat$Epiyear==2013], 
+     pch=20, xlab="Weeks of 2013", ylab="Malaria Cases", 
+     main="Malaria Cases over 2013", xaxt="n")
+axis(1, at = seq(0, 52, by = 4), las=2)
+
 plot(dat$cases[dat$Epiyear==2014] ~ dat$Epiweek[dat$Epiyear==2014])
 plot(dat$cases[dat$Epiyear==2015] ~ dat$Epiweek[dat$Epiyear==2015])
 plot(dat$cases[dat$Epiyear==2016] ~ dat$Epiweek[dat$Epiyear==2016])
@@ -133,6 +132,30 @@ plot(dat$cases[dat$Epiyear==2016] ~ dat$Epiweek[dat$Epiyear==2016])
 # (histograms, splines, etc), mapsof incidence (by district, across years, etc) 
 # and explore, at the very least, basic relationships between the independent 
 # variables and the outcome (malaria incidence)
+
+dat$psfc22 <- scale(dat$psfc2)
+dat$sd88 <- scale(dat$sd8)
+dat$tavg44 <- scale(dat$tavg4)
+dat$raint22 <- scale(dat$raint2)
+dat$rh88 <- scale(dat$rh8)
+dat$cases0 <- scale(dat$cases)
+
+dat2 <- dat[complete.cases(dat[ , 13]),]
+
+plot(smooth.spline(dat$Epiweek, dat$raint22), type="l", col="blue", ylim=c(-3,2.1), xlab="Epidemiology week", 
+     ylab="Standard deviations", main = "Normalized Cases and Lagged Weather", lwd=2)
+lines(smooth.spline(dat$Epiweek, dat$tavg44), type="l", col="red", lwd=2)
+lines(smooth.spline(dat$Epiweek, dat$sd88), type="l", col="purple", lwd=2)
+lines(smooth.spline(dat2$Epiweek, dat2$cases0), type="l", col="green4", lwd=3,lty=2)
+lines(smooth.spline(dat$Epiweek, dat$psfc22), type="l", col="deepskyblue", lwd=2)
+legend(10, -1.5, c("Rain lag 2", "Ave temp lag 4", "Rel Hum lag 8","Pressure lag 2" ,"Cases"), 
+       text.col = c("blue", "red", "purple", "deepskyblue", "green4"), 
+       cex = .9, bty = "n")
+
+
+plot(smooth.spline(dat2$Epiweek, dat2$cases), type="l", col="deepskyblue", xlab="Epidemiology week", 
+     ylab="Standard deviations", main = "Normalized Cases and Lagged Weather", lwd=2)
+
 
 #-------------------
 # MERGE SPATIAL DATA

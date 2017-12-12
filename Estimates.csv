@@ -1,8 +1,8 @@
 "","Estimate","Lower","Upper","Pr(>|z|)"
-"Intercept",19.595,19.026,20.164,0
-"ITN Decay",0.037,0.028,0.046,0
-"IRS Decay",-0.054,-0.062,-0.047,0
-"Temperatue",0.017,0.017,0.018,0
-"Rainfall",0.001,0.001,0.001,0
-"Relative Humididy",0,0,0,0.009
-"Barometric Pressure",-0.025,-0.025,-0.024,0
+"Intercept",19.5953,19.0265,20.1642,0
+"ITN Decay",0.0371,0.0282,0.0459,0
+"IRS Decay",-0.0543,-0.0618,-0.0468,0
+"Temperatue",0.0174,0.0168,0.0181,0
+"Rainfall",0.001,9e-04,0.0011,0
+"Relative Humididy",-1e-04,-2e-04,0,0.0088
+"Barometric Pressure",-0.0249,-0.0254,-0.0244,0

@@ -107,8 +107,8 @@ summary(mod) # AIC= 85666.7
 est <- as.data.frame(summary(mod)$coef)
 est$Lower <- est$Estimate -1.96*est$`Std. Error`
 est$Upper <- est$Estimate +1.96*est$`Std. Error`
-est <- round(est[,c(1,5:6,4)], digits=3)
-rownames(est) <- c("Intercept", "ITN Decay", "IRS Decay", "Temperatue", "Rainfall",
+est <- round(est[,c(1,5:6,4)], digits=4)
+rownames(est) <- c("Intercept", "ITN Decay", "IRS Decay", "Temperature", "Rainfall",
                    "Relative Humididy", "Barometric Pressure")
 
 write.csv(est, '/Users/alyssaforber/Documents/Denver/Fall2017/RPython/RProject/Estimates.csv')
